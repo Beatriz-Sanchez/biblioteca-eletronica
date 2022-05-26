@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import BottomTabNavigator from './components/BottomTabNavigator';
 
 export default class App extends Component{
   render(){
     return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <StatusBar style="auto" />
-      </View>
+      <BottomTabNavigator />
     );
   }
 }
