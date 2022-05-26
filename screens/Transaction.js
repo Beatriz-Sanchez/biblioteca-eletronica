@@ -57,12 +57,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#ffff",
-    fontSize: 30
+    fontSize: 30,
+    fontFamily: "Rajdhani_600SemiBold",
   },
   buttonText: {
     color: "#ffff",
     fontSize: 24,
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily: "Rajdhani_600SemiBold",
   },
   button:{
     width:"43%",

@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#ffff",
-    fontSize: 30
+    fontSize: 30,
+    fontFamily: "Rajdhani_600SemiBold",
   }
 });
