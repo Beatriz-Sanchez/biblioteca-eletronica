@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import BottomTabNavigator from './components/BottomTabNavigator';
+import {Rajdhani_600SemiBold } from "@expo-google-fonts\rajdhani";
+import * as Font from "expo-font";
 
 export default class App extends Component{
   render(){
