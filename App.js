@@ -28,6 +28,6 @@ export default class App extends Component {
           <BottomTabNavigator />
       );
     }
-    return "loading..."
+    return <Text>loading...</Text>
   }
 }
