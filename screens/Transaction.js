@@ -51,6 +51,9 @@ export default class TransactionScreen extends Component {
       });
     }
   };
+  handleTransaction(){
+    
+  }
   render() {
     const { domState, hasCameraPermissions, bookId, studentId, scanned } = this.state;
     if (domState !== "normal") {
@@ -101,6 +104,12 @@ export default class TransactionScreen extends Component {
             <Text style={styles.scanbuttonText}>Digitalizar</Text>
           </TouchableOpacity>
           </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.handleTransaction}
+          >
+            <Text style={styles.buttonText}>Enviar</Text>
+          </TouchableOpacity>
           </View>
         </ImageBackground>
       </View>
@@ -146,10 +155,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F48D20",
     borderRadius: 15,
     marginTop: 25,
+    height: 55,
   },
   lowerContainer: {
     flex: 0.5,
     alignItems: "center",
+    width: "100%"
   },
   textInputContainer: {
     borderRadius: 10,
