@@ -21,7 +21,8 @@ export default class TransactionScreen extends Component {
       domState: "normal",
       hasCameraPermissions: null,
       scanned: false,
-      scannedData: "",
+      bookId: "",
+      studentId: "",
     };
   }
   getCameraPermission = async (domState) => {
@@ -34,15 +35,25 @@ export default class TransactionScreen extends Component {
     });
   };
   handleBarCodeScanned = async ({ type, data }) => {
-    this.setState({
-      scannedData: data,
-      domState: "normal",
-      scanned: true,
-    });
+    const { domState } = this.state;
+    if(domState === "bookId"){
+      this.setState({
+        bookId: data,
+        domState: "normal",
+        scanned: true,
+      });
+    }
+    if(domState === "studentId"){
+      this.setState({
+        studentId: data,
+        domState: "normal",
+        scanned: true,
+      });
+    }
   };
   render() {
-    const { domState, hasCameraPermissions, scannedData, scanned } = this.state;
-    if (domState === "scanner") {
+    const { domState, hasCameraPermissions, bookId, studentId, scanned } = this.state;
+    if (domState !== "normal") {
       return (
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
@@ -63,11 +74,12 @@ export default class TransactionScreen extends Component {
               style={styles.textInput}
               placeholder={"ID Livro"}
               placeholderTextColor={"#ffffff"}
+              value={bookId}
             />
             <TouchableOpacity
             style={styles.scanbutton}
             onPress={() => {
-              this.getCameraPermission("scanner");
+              this.getCameraPermission("bookId");
             }}
           >
             <Text style={styles.scanbuttonText}>Digitalizar</Text>
@@ -78,11 +90,12 @@ export default class TransactionScreen extends Component {
               style={styles.textInput}
               placeholder={"ID Aluno"}
               placeholderTextColor={"#ffffff"}
+              value={studentId}
             />
             <TouchableOpacity
             style={styles.scanbutton}
             onPress={() => {
-              this.getCameraPermission("scanner");
+              this.getCameraPermission("studentId");
             }}
           >
             <Text style={styles.scanbuttonText}>Digitalizar</Text>
