@@ -57,14 +57,38 @@ export default class TransactionScreen extends Component {
             <Image source={appIcon} style={styles.appIcon} />
             <Image source={appName} style={styles.appName} />
           </View>
-          <TouchableOpacity
-            style={styles.button}
+          <View style={styles.lowerContainer}>
+          <View style={styles.textInputContainer}>
+            <TextInput
+              style={styles.textInput}
+              placeholder={"ID Livro"}
+              placeholderTextColor={"#ffffff"}
+            />
+            <TouchableOpacity
+            style={styles.scanbutton}
             onPress={() => {
               this.getCameraPermission("scanner");
             }}
           >
-            <Text style={styles.buttonText}>Escanear{"\n"}QR code</Text>
+            <Text style={styles.scanbuttonText}>Digitalizar</Text>
           </TouchableOpacity>
+          </View>
+          <View style={styles.textInputContainer}>
+            <TextInput
+              style={styles.textInput}
+              placeholder={"ID Aluno"}
+              placeholderTextColor={"#ffffff"}
+            />
+            <TouchableOpacity
+            style={styles.scanbutton}
+            onPress={() => {
+              this.getCameraPermission("scanner");
+            }}
+          >
+            <Text style={styles.scanbuttonText}>Digitalizar</Text>
+          </TouchableOpacity>
+          </View>
+          </View>
         </ImageBackground>
       </View>
     );
@@ -109,5 +133,41 @@ const styles = StyleSheet.create({
     backgroundColor: "#F48D20",
     borderRadius: 15,
     marginTop: 25,
+  },
+  lowerContainer: {
+    flex: 0.5,
+    alignItems: "center",
+  },
+  textInputContainer: {
+    borderRadius: 10,
+    borderWidth: 3,
+    flexDirection: "row",
+    borderColor: "#FFFFFF",
+    marginTop: 10,
+  },
+  textInput: {
+    width: "57%",
+    height: 50,
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    fontSize: 18,
+    backgroundColor: "#5653D4",
+    fontFamily: "Rajdhani_600SemiBold",
+    color: "#FFFFFF"
+  },
+  scanbutton: {
+    width: 100,
+    height: 50,
+    backgroundColor: "#F48D20",
+    borderTopRightRadius: 7,
+    borderBottomRightRadius: 7,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  scanbuttonText: {
+    fontSize: 17,
+    color: "#fff",
+    fontFamily: "Rajdhani_600SemiBold"
   },
 });
