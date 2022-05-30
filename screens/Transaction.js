@@ -9,6 +9,8 @@ import {
   TextInput,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { deleteDoc } from 'firebase/firestore';
+import { db } from '../config'
 
 const bgImage = require("../assets/background2.png");
 const appIcon = require("../assets/appIcon.png");
