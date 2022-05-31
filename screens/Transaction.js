@@ -26,6 +26,8 @@ export default class TransactionScreen extends Component {
       scanned: false,
       bookId: "",
       studentId: "",
+      bookName: "",
+      studentName: "",
     };
   }
   getCameraPermission = async (domState) => {
@@ -54,8 +56,13 @@ export default class TransactionScreen extends Component {
       });
     }
   };
-  handleTransaction = () => {
+
+  handleTransaction = async () => {
     const { bookId } = this.state;
+    const { studentId } = this.state;
+
+    this.getBookDetails(bookId);
+    this.getStudentDetails(studentId);
 
     const bookDoc = doc(db,"books",bookId);
     getDoc(bookDoc)
@@ -83,6 +90,32 @@ export default class TransactionScreen extends Component {
   InitiateBookReturn = () => {
     alert("livro devolvido")
   }
+
+  getBookDetails= (bookId)=>{
+    bookId = bookId.trim() //assegurar que não há espaços em branco antes ou depois
+
+    const bookRef = doc(db, "books", bookId)
+    
+    getDoc(bookRef).then(doc => {
+      this.setState({
+        bookName : doc.data().book_name,
+      })
+      console.log(this.state.bookName);
+    }).catch((error) => console.warn(error.message))
+  }
+
+  getStudentDetails=(studentId)=>{
+    studentId = studentId.trim()
+    const studentRef = doc(db, "students", studentId)
+    
+    getDoc(studentRef).then(doc => {
+      this.setState({
+        studentName : doc.data().student_name,
+      })
+      console.log(this.state.studentName)
+    }).catch((error) => console.warn(error.message))
+  }
+
   render() {
     const { domState, hasCameraPermissions, bookId, studentId, scanned } =
       this.state;
