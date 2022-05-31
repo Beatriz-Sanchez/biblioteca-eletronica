@@ -7,9 +7,18 @@ import {
   Image,
   ImageBackground,
   TextInput,
+  KeyboardAvoidingView
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  addDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  serverTimestamp,
+  increment,
+} from "firebase/firestore";
 import { db } from "../config";
 
 const bgImage = require("../assets/background2.png");
@@ -63,29 +72,85 @@ export default class TransactionScreen extends Component {
 
     this.getBookDetails(bookId);
     this.getStudentDetails(studentId);
+    const { bookName, studentName } = this.state;
 
     var transactionType = await this.checkBookAvailability(bookId);
 
     if (transactionType == "issue") {
-      this.initiateBookIssue();
-    } else if (transactionType == "return"){
-      this.InitiateBookReturn();
-    } else if (!transactiontype) {
-    alert("documento não localizado, tente novamente");
-    };
+      this.initiateBookIssue(bookId, studentId, bookName, studentName);
+    } else if (transactionType == "return") {
+      this.InitiateBookReturn(bookId, studentId, bookName, studentName);
+    } else if (!transactionType) {
+      alert("Livro não encontrado, cheque o ID e tente novamente");
+      this.setState({
+        bookId: "",
+        studentId: "",
+      });
+    }
+  };
 
-  }
+  initiateBookIssue = (bookId, studentId, bookName, studentName) => {
+    var transactionsRef = collection(db, "transactions");
+    var bookRef = doc(db, "books", bookId);
+    var studentRef = doc(db, "students", studentId);
 
-  initiateBookIssue = () => {
+    addDoc(transactionsRef, {
+      student_id: studentId,
+      student_name: studentName,
+      book_id: bookId,
+      book_name: bookName,
+      date: serverTimestamp(),
+      transaction_type: "issue",
+    });
+
+    updateDoc(bookRef, {
+      is_book_available: false,
+    });
+
+    updateDoc(studentRef, {
+      number_of_books_issued: increment(1),
+    });
+
+    this.setState({
+      bookId: "",
+      studentId: "",
+    });
+
     alert("livro retirado");
   };
 
-  InitiateBookReturn = () => {
+  InitiateBookReturn = (bookId, studentId, bookName, studentName) => {
+    var transactionsRef = collection(db, "transactions");
+    var bookRef = doc(db, "books", bookId);
+    var studentRef = doc(db, "students", studentId);
+
+    addDoc(transactionsRef, {
+      student_id: studentId,
+      student_name: studentName,
+      book_id: bookId,
+      book_name: bookName,
+      date: serverTimestamp(),
+      transaction_type: "return",
+    });
+
+    updateDoc(bookRef, {
+      is_book_available: true,
+    });
+
+    updateDoc(studentRef, {
+      number_of_books_issued: increment(-1),
+    });
+
+    this.setState({
+      bookId: "",
+      studentId: "",
+    });
+
     alert("livro devolvido");
   };
 
   getBookDetails = (bookId) => {
-    bookId = bookId.trim(); 
+    bookId = bookId.trim();
     const bookRef = doc(db, "books", bookId);
 
     getDoc(bookRef)
@@ -93,7 +158,6 @@ export default class TransactionScreen extends Component {
         this.setState({
           bookName: doc.data().book_name,
         });
-        console.log(this.state.bookName);
       })
       .catch((error) => console.warn(error.message));
   };
@@ -107,7 +171,6 @@ export default class TransactionScreen extends Component {
         this.setState({
           studentName: doc.data().student_name,
         });
-        console.log(this.state.studentName);
       })
       .catch((error) => console.warn(error.message));
   };
@@ -115,12 +178,11 @@ export default class TransactionScreen extends Component {
   checkBookAvailability = async (bookId) => {
     const bookRef = doc(db, "books", bookId);
     const bookDoc = await getDoc(bookRef);
-    let transactionType = ""
+    let transactionType = "";
 
     if (bookDoc.data()) {
       let book = bookDoc.data();
-      transactionType = (book.is_book_available) ? "issue" : "return";
-
+      transactionType = book.is_book_available ? "issue" : "return";
     } else {
       transactionType = false;
     }
@@ -139,7 +201,7 @@ export default class TransactionScreen extends Component {
       );
     }
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior="height" style={styles.container}>
         <ImageBackground source={bgImage} style={styles.bgImage}>
           <View style={styles.upperContainer}>
             <Image source={appIcon} style={styles.appIcon} />
@@ -152,6 +214,7 @@ export default class TransactionScreen extends Component {
                 placeholder={"ID Livro"}
                 placeholderTextColor={"#ffffff"}
                 value={bookId}
+                onChangeText={text => this.setState({bookId: text})}
               />
               <TouchableOpacity
                 style={styles.scanbutton}
@@ -168,6 +231,7 @@ export default class TransactionScreen extends Component {
                 placeholder={"ID Aluno"}
                 placeholderTextColor={"#ffffff"}
                 value={studentId}
+                onChangeText={text => this.setState({studentId: text})}
               />
               <TouchableOpacity
                 style={styles.scanbutton}
@@ -186,7 +250,7 @@ export default class TransactionScreen extends Component {
             </TouchableOpacity>
           </View>
         </ImageBackground>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

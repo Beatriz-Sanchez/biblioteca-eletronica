@@ -47,6 +47,7 @@ export default class BottomTabNavigator extends Component {
               borderTopWidth: 0,
               backgroundColor: "#5653d4",
             },
+            tabBarHideOnKeyboard: true,
           })}
         >
           <Tab.Screen name="Transação" component={TransactionScreen}/>
