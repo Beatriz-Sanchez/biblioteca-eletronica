@@ -9,8 +9,8 @@ import {
   TextInput,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import { deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '../config';
+import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../config";
 
 const bgImage = require("../assets/background2.png");
 const appIcon = require("../assets/appIcon.png");
@@ -64,58 +64,69 @@ export default class TransactionScreen extends Component {
     this.getBookDetails(bookId);
     this.getStudentDetails(studentId);
 
-    const bookDoc = doc(db,"books",bookId);
-    getDoc(bookDoc)
-      .then((doc) => {
-        if(doc.data()){
-          let book = doc.data();
-          if (book.is_book_available){
-            this.initiateBookIssue();
-          } else {
-            this.InitiateBookReturn();
-          }
-        } else {
-          alert("documento não localizado, tente novamente")
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
+    var transactionType = await this.checkBookAvailability(bookId);
+
+    if (transactionType == "issue") {
+      this.initiateBookIssue();
+    } else if (transactionType == "return"){
+      this.InitiateBookReturn();
+    } else if (!transactiontype) {
+    alert("documento não localizado, tente novamente");
+    };
+
+  }
 
   initiateBookIssue = () => {
-    alert("livro retirado")
-  }
+    alert("livro retirado");
+  };
 
   InitiateBookReturn = () => {
-    alert("livro devolvido")
-  }
+    alert("livro devolvido");
+  };
 
-  getBookDetails= (bookId)=>{
-    bookId = bookId.trim() //assegurar que não há espaços em branco antes ou depois
+  getBookDetails = (bookId) => {
+    bookId = bookId.trim(); 
+    const bookRef = doc(db, "books", bookId);
 
-    const bookRef = doc(db, "books", bookId)
-    
-    getDoc(bookRef).then(doc => {
-      this.setState({
-        bookName : doc.data().book_name,
+    getDoc(bookRef)
+      .then((doc) => {
+        this.setState({
+          bookName: doc.data().book_name,
+        });
+        console.log(this.state.bookName);
       })
-      console.log(this.state.bookName);
-    }).catch((error) => console.warn(error.message))
-  }
+      .catch((error) => console.warn(error.message));
+  };
 
-  getStudentDetails=(studentId)=>{
-    studentId = studentId.trim()
-    const studentRef = doc(db, "students", studentId)
-    
-    getDoc(studentRef).then(doc => {
-      this.setState({
-        studentName : doc.data().student_name,
+  getStudentDetails = (studentId) => {
+    studentId = studentId.trim();
+    const studentRef = doc(db, "students", studentId);
+
+    getDoc(studentRef)
+      .then((doc) => {
+        this.setState({
+          studentName: doc.data().student_name,
+        });
+        console.log(this.state.studentName);
       })
-      console.log(this.state.studentName)
-    }).catch((error) => console.warn(error.message))
-  }
+      .catch((error) => console.warn(error.message));
+  };
 
+  checkBookAvailability = async (bookId) => {
+    const bookRef = doc(db, "books", bookId);
+    const bookDoc = await getDoc(bookRef);
+    let transactionType = ""
+
+    if (bookDoc.data()) {
+      let book = bookDoc.data();
+      transactionType = (book.is_book_available) ? "issue" : "return";
+
+    } else {
+      transactionType = false;
+    }
+
+    return transactionType;
+  };
   render() {
     const { domState, hasCameraPermissions, bookId, studentId, scanned } =
       this.state;
