@@ -175,7 +175,7 @@ export default class TransactionScreen extends Component {
 
     //toast para iPhone
     //toast para iPhone
-    Toast.show('Livro não devolvido', {
+    Toast.show('Livro devolvido', {
       duration: Toast.durations.SHORT,
     });
   };
