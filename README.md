@@ -6,7 +6,7 @@
 # Biblioteca Eletrônica
 <img src="https://raw.githubusercontent.com/Beatriz-Sanchez/biblioteca-eletronica/73-completa/assets/appIcon.png" width="200px">
 
-Um app mobile que visa providenciar uma solução de administração de bibliotecas, para escolas com poucos recursos e sem uma bibliotecária. Construído com React-Native
+Um app mobile que visa providenciar uma solução de administração de bibliotecas, para escolas com poucos recursos e sem uma bibliotecária. Construído em JavaScript, com React-Native e Firebase
 
 Ao desenvolver este app, os alunos aprendem:
 - criação de user stories
