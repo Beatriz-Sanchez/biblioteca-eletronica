@@ -14,3 +14,15 @@ Ao desenvolver este app, os alunos aprendem:
 - ciclo de vida dos componentes React Native
 - criação e manipulação de estados dos componentes React Native
 - criação e manipulação de banco de dados Firebase Firestore
+
+
+## Funcionalidades
+
+### Tela de Transações: 
+
+<img src="https://github.com/Beatriz-Sanchez/biblioteca-eletronica/blob/main/assets/biblio-transacoes-cropped.gif?raw=true" width="300">
+
+- entrada de ID de aluno e de ID de livro por digitalização de QR code ou manualmente
+- confere disponibilidade do livro para detectar se a transação será uma devolução ou uma retirada
+- confere eligibilidade do aluno para a realização da transação e automaticamente realiza a transação desejada caso ela seja possível
+- feedback para o usuário por meio de Toast caso algum dos IDs não seja encontrado ou o aluno não se encontre elegivel para a aretirada do livro
