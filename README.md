@@ -12,6 +12,7 @@ Ao desenvolver este app, os alunos aprendem:
 - criação de user stories
 - gerenciamento de versões com Git e GitHub
 - utilização de bibliotecas modulares
+- desestruturação de objetos
 - utilização do Node JS
 - criação de componentes React Naive
 - criação de containers de navegação
