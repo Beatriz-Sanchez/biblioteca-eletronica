@@ -410,9 +410,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderColor: "#FFFFFF",
     marginTop: 10,
+    justifyContent: "space-between"
   },
   textInput: {
-    width: "57%",
+    minWidth: "57%",
     height: 50,
     padding: 10,
     borderTopLeftRadius: 10,
