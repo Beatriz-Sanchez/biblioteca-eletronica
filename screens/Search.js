@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from "react-native";
 
 import { db } from "../config";
 
@@ -31,7 +31,7 @@ export default class SearchScreen extends Component {
     var transactionType =
       item.transaction_type === "issue" ? "retirado" : "devolvido";
     return (
-      <KeyboardAvoidingView behavior="height" style={{ borderWidth: 1 }}>
+      <View style={{ borderWidth: 1 }}>
         <ListItem key={i} bottomDivider>
           <Icon type={"antdesign"} name={"book"} size={40} />
           <ListItem.Content>
@@ -73,7 +73,7 @@ export default class SearchScreen extends Component {
             </View>
           </ListItem.Content>
         </ListItem>
-      </KeyboardAvoidingView>
+      </View>
     );
   };
 
@@ -99,7 +99,6 @@ export default class SearchScreen extends Component {
       searchDocs.forEach((doc) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, doc.data()],
-          lastVisibleTransaction: doc
         })
       })
       
@@ -110,7 +109,6 @@ export default class SearchScreen extends Component {
       searchDocs.forEach((doc) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, doc.data()],
-          lastVisibleTransaction: doc
         })
       })
     }
@@ -158,7 +156,8 @@ const styles = StyleSheet.create({
   upperContainer: {
     flex: 0.2,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    minHeight: 70,
   },
   textinputContainer: {
     borderRadius: 10,
@@ -166,7 +165,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderColor: "#FFFFFF",
     marginTop: 10,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   textinput: {
     minWidth: "57%",
