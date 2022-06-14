@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from "r
 
 import { db } from "../config";
 
-import { collection, getDocs, query, where, limit } from "firebase/firestore";
+import { collection, getDocs, query, where, limit, startAfter } from "firebase/firestore";
 
 import { Avatar, ListItem, Icon } from "react-native-elements";
 
@@ -13,6 +13,7 @@ export default class SearchScreen extends Component {
     this.state = {
       allTransactions: [],
       searchText: "",
+      lastVisibleTransaction: "",
     };
   }
   getTransactions = async () => {
@@ -21,6 +22,7 @@ export default class SearchScreen extends Component {
       docs.forEach((transaction) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, transaction.data()],
+          lastVisibleTransaction: transaction,
         });
       })
     );
@@ -99,6 +101,7 @@ export default class SearchScreen extends Component {
       searchDocs.forEach((doc) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, doc.data()],
+          lastVisibleTransaction: doc,
         })
       })
       
@@ -109,6 +112,7 @@ export default class SearchScreen extends Component {
       searchDocs.forEach((doc) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, doc.data()],
+          lastVisibleTransaction: doc,
         })
       })
     }
