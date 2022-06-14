@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 
 import { db } from "../config";
 
@@ -31,7 +31,7 @@ export default class SearchScreen extends Component {
     var transactionType =
       item.transaction_type === "issue" ? "retirado" : "devolvido";
     return (
-      <View style={{ borderWidth: 1 }}>
+      <KeyboardAvoidingView behavior="height" style={{ borderWidth: 1 }}>
         <ListItem key={i} bottomDivider>
           <Icon type={"antdesign"} name={"book"} size={40} />
           <ListItem.Content>
@@ -73,7 +73,7 @@ export default class SearchScreen extends Component {
             </View>
           </ListItem.Content>
         </ListItem>
-      </View>
+      </KeyboardAvoidingView>
     );
   };
 
@@ -93,7 +93,7 @@ export default class SearchScreen extends Component {
     }
 
     if(enteredText[0] == "B"){
-      var searchRef = query(collection(db,"transactions"), where("book_id", "==", text), limit(10))
+      var searchRef = query(collection(db,"transactions"), where("book_id", "==", text))
       var searchDocs = await getDocs(searchRef)
 
       searchDocs.forEach((doc) => {
@@ -104,7 +104,7 @@ export default class SearchScreen extends Component {
       })
       
     }else if(enteredText[0] == "S"){
-      var searchRef = query(collection(db,"transactions"), where("student_id", "==", text), limit(10))
+      var searchRef = query(collection(db,"transactions"), where("student_id", "==", text))
       var searchDocs = await getDocs(searchRef)
 
       searchDocs.forEach((doc) => {
@@ -133,7 +133,7 @@ export default class SearchScreen extends Component {
               style={styles.scanbutton}
               onPress={() => this.handleSearch(searchText)}
             >
-              <Text styles={styles.scanbuttonText}>Pesquisa</Text>
+              <Text style={styles.buttonText}>Pesquisa</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  scanbuttonText: {
-    fontSize: 24,
+  buttonText: {
+    fontSize: 18,
     fontFamily: "Rajdhani_600SemiBold",
     color: "#ffffff",
   },
