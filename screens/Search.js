@@ -1,9 +1,23 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 
 import { db } from "../config";
 
-import { collection, getDocs, query, where, limit, startAfter } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  limit,
+  startAfter,
+} from "firebase/firestore";
 
 import { Avatar, ListItem, Icon } from "react-native-elements";
 
@@ -83,40 +97,103 @@ export default class SearchScreen extends Component {
     this.getTransactions();
   }
 
-  handleSearch = async text => {
+  handleSearch = async (text) => {
     var enteredText = text.toUpperCase().split("");
     text = text.toUpperCase();
-    
+
     this.setState({
-      allTransactions: []
-    })
-    if(!text){
+      allTransactions: [],
+    });
+    if (!text) {
       this.getTransactions();
     }
 
-    if(enteredText[0] == "B"){
-      var searchRef = query(collection(db,"transactions"), where("book_id", "==", text), limit(10))
-      var searchDocs = await getDocs(searchRef)
+    if (enteredText[0] == "B") {
+      var searchRef = query(
+        collection(db, "transactions"),
+        where("book_id", "==", text),
+        limit(10)
+      );
+      var searchDocs = await getDocs(searchRef);
 
       searchDocs.forEach((doc) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, doc.data()],
           lastVisibleTransaction: doc,
-        })
-      })
-      
-    }else if(enteredText[0] == "S"){
-      var searchRef = query(collection(db,"transactions"), where("student_id", "==", text), limit(10))
-      var searchDocs = await getDocs(searchRef)
+        });
+      });
+    } else if (enteredText[0] == "S") {
+      var searchRef = query(
+        collection(db, "transactions"),
+        where("student_id", "==", text),
+        limit(10)
+      );
+      var searchDocs = await getDocs(searchRef);
 
       searchDocs.forEach((doc) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, doc.data()],
           lastVisibleTransaction: doc,
-        })
-      })
+        });
+      });
     }
-  }
+  };
+
+  fetchMoreTransactions = async (text) => {
+    var enteredText = text.toUpperCase().split("");
+    text = text.toUpperCase();
+
+    const { lastVisibleTransaction, allTransactions } = this.state;
+
+    console.log("transações: " + lastVisibleTransaction);
+
+    if (enteredText[0] == "B") {
+      var searchRef = query(
+        collection(db, "transactions"),
+        where("book_id", "==", text),
+        startAfter(lastVisibleTransaction),
+        limit(10)
+      );
+
+      var searchDocs = await getDocs(searchRef);
+
+      searchDocs.forEach((doc) => {
+        this.setState({
+          allTransactions: [...this.state.allTransactions, doc.data()],
+          lastVisibleTransaction: doc,
+        });
+      });
+    } else if (enteredText[0] == "S") {
+      var searchRef = query(
+        collection(db, "transactions"),
+        where("student_id", "==", text),
+        startAfter(lastVisibleTransaction),
+        limit(10)
+      );
+      var searchDocs = await getDocs(searchRef);
+
+      searchDocs.forEach((doc) => {
+        this.setState({
+          allTransactions: [...this.state.allTransactions, doc.data()],
+          lastVisibleTransaction: doc,
+        });
+      });
+    } else if (!enteredText[0]) {
+      var searchRef = query(
+        collection(db, "transactions"),
+        limit(10),
+        startAfter(lastVisibleTransaction)
+      );
+      var searchDocs = await getDocs(searchRef);
+
+      searchDocs.forEach((doc) => {
+        this.setState({
+          allTransactions: [...this.state.allTransactions, doc.data()],
+          lastVisibleTransaction: doc,
+        });
+      });
+    }
+  };
 
   render() {
     const { allTransactions, searchText } = this.state;
@@ -144,6 +221,8 @@ export default class SearchScreen extends Component {
             data={allTransactions}
             renderItem={this.renderItem}
             keyExtractor={(item, index) => index.toString()}
+            onEndReached={() => this.fetchMoreTransactions(searchText)}
+            onEndReachedThreshold={0.07}
           />
         </View>
       </View>
@@ -198,7 +277,7 @@ const styles = StyleSheet.create({
   },
   lowerContainer: {
     flex: 0.8,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#FFFFFF",
   },
   title: {
     fontSize: 20,
