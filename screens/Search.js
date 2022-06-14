@@ -16,7 +16,7 @@ export default class SearchScreen extends Component {
     };
   }
   getTransactions = async () => {
-    var transactionsRef = collection(db, "transactions");
+    var transactionsRef = query(collection(db, "transactions"), limit(10));
     getDocs(transactionsRef).then((docs) =>
       docs.forEach((transaction) => {
         this.setState({
@@ -93,7 +93,7 @@ export default class SearchScreen extends Component {
     }
 
     if(enteredText[0] == "B"){
-      var searchRef = query(collection(db,"transactions"), where("book_id", "==", text))
+      var searchRef = query(collection(db,"transactions"), where("book_id", "==", text), limit(10))
       var searchDocs = await getDocs(searchRef)
 
       searchDocs.forEach((doc) => {
@@ -103,7 +103,7 @@ export default class SearchScreen extends Component {
       })
       
     }else if(enteredText[0] == "S"){
-      var searchRef = query(collection(db,"transactions"), where("student_id", "==", text))
+      var searchRef = query(collection(db,"transactions"), where("student_id", "==", text), limit(10))
       var searchDocs = await getDocs(searchRef)
 
       searchDocs.forEach((doc) => {
