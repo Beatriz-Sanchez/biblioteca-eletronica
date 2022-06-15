@@ -14,6 +14,13 @@ const bgImage = require("../assets/background1.png");
 const appIcon = require("../assets/appIcon.png");
 const appName = require("../assets/appName.png");
 
+import {auth} from "../config";
+import {signInWithEmailAndPassword} from 'firebase/auth';
+
+//toast p/ iPhone
+import { RootSiblingParent } from "react-native-root-siblings";
+import Toast from "react-native-root-toast";
+
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -22,7 +29,22 @@ export default class Login extends Component {
       password: "",
     };
   }
+
+  handleLogin = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        Toast.show("Bem-vindo(a)!", {
+            duration: Toast.durations.SHORT,
+          });
+        setTimeout(()=>{this.props.navigation.navigate("BottomTabNavigator");}, 500)
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
   render() {
+    const {email, password} = this.state;
     return (
       <View style={styles.container}>
         <ImageBackground source={bgImage} style={styles.bgImage}>
@@ -31,7 +53,8 @@ export default class Login extends Component {
             <Image source={appName} style={styles.appName} />
           </View>
 
-          <KeyboardAvoidingView behavior="height" style={styles.lowerContainer}>
+          <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={-500} style={styles.lowerContainer}>
+            <RootSiblingParent>
             <TextInput
               style={styles.textinput}
               onChangeText={(text) => this.setState({ email: text })}
@@ -46,9 +69,10 @@ export default class Login extends Component {
               placeholderTextColor={"#FFFFFF"}
               secureTextEntry
             />
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => this.handleLogin(email, password)}>
               <Text style={styles.buttonText}>Entrar</Text>
             </TouchableOpacity>
+            </RootSiblingParent>
           </KeyboardAvoidingView>
         </ImageBackground>
       </View>
