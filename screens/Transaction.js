@@ -23,9 +23,10 @@ import {
   query,
   where,
   getDocs,
-  limit
+  limit,
+  orderBy,
 } from "firebase/firestore";
-//toast p/ iPhone
+//toast p/ iPhone e Android
 import { RootSiblingParent } from "react-native-root-siblings";
 import Toast from "react-native-root-toast";
 
@@ -223,7 +224,7 @@ export default class TransactionScreen extends Component {
     const bookDoc = await getDoc(bookRef);
     let transactionType = "";
 
-    if (bookDoc.data()) {
+    if (bookDoc.exists()) {
       let book = bookDoc.data();
       transactionType = book.is_book_available ? "issue" : "return";
     } else {
@@ -239,7 +240,7 @@ export default class TransactionScreen extends Component {
 
     var isStudentEligible = "";
 
-    if (studentDoc.exists) {
+    if (studentDoc.exists()) {
       if (studentDoc.data().number_of_books_issued < 2) {
         isStudentEligible = true;
       } else {
@@ -269,9 +270,12 @@ export default class TransactionScreen extends Component {
     const transactionRef = query(
       collection(db, "transactions"),
       where("book_id", "==", bookId),
+      orderBy("date", "desc"),
       limit(1)
     );
     const docs = await getDocs(transactionRef);
+
+    console.log(docs);
 
     var isStudentEligible;
     docs.forEach((doc) => {
@@ -303,7 +307,7 @@ export default class TransactionScreen extends Component {
       );
     }
     return (
-      <KeyboardAvoidingView behavior="height" style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={-500} style={styles.container}>
         <RootSiblingParent>
           <ImageBackground source={bgImage} style={styles.bgImage}>
             <View style={styles.upperContainer}>
