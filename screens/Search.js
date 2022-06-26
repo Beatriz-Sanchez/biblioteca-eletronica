@@ -17,6 +17,7 @@ import {
   where,
   limit,
   startAfter,
+  orderBy,
 } from "firebase/firestore";
 
 import { Avatar, ListItem, Icon } from "react-native-elements";
@@ -31,7 +32,7 @@ export default class SearchScreen extends Component {
     };
   }
   getTransactions = async () => {
-    var transactionsRef = query(collection(db, "transactions"), limit(10));
+    var transactionsRef = query(collection(db, "transactions"), orderBy("date", "desc"), limit(10));
     getDocs(transactionsRef).then((docs) =>
       docs.forEach((transaction) => {
         this.setState({
@@ -105,13 +106,14 @@ export default class SearchScreen extends Component {
       allTransactions: [],
     });
     if (!text) {
-      this.getTransactions();
+      await this.getTransactions();
     }
 
     if (enteredText[0] == "B") {
       var searchRef = query(
         collection(db, "transactions"),
         where("book_id", "==", text),
+        orderBy("date", "desc"),
         limit(10)
       );
       var searchDocs = await getDocs(searchRef);
@@ -126,6 +128,7 @@ export default class SearchScreen extends Component {
       var searchRef = query(
         collection(db, "transactions"),
         where("student_id", "==", text),
+        orderBy("date", "desc"),
         limit(10)
       );
       var searchDocs = await getDocs(searchRef);
@@ -151,6 +154,7 @@ export default class SearchScreen extends Component {
       var searchRef = query(
         collection(db, "transactions"),
         where("book_id", "==", text),
+        orderBy("date", "desc"),
         startAfter(lastVisibleTransaction),
         limit(10)
       );
@@ -159,7 +163,7 @@ export default class SearchScreen extends Component {
 
       searchDocs.forEach((doc) => {
         this.setState({
-          allTransactions: [...this.state.allTransactions, doc.data()],
+          allTransactions: [...allTransactions, doc.data()],
           lastVisibleTransaction: doc,
         });
       });
@@ -167,6 +171,7 @@ export default class SearchScreen extends Component {
       var searchRef = query(
         collection(db, "transactions"),
         where("student_id", "==", text),
+        orderBy("date", "desc"),
         startAfter(lastVisibleTransaction),
         limit(10)
       );
@@ -174,13 +179,14 @@ export default class SearchScreen extends Component {
 
       searchDocs.forEach((doc) => {
         this.setState({
-          allTransactions: [...this.state.allTransactions, doc.data()],
+          allTransactions: [...allTransactions, doc.data()],
           lastVisibleTransaction: doc,
         });
       });
     } else if (!enteredText[0]) {
       var searchRef = query(
         collection(db, "transactions"),
+        orderBy("date", "desc"),
         limit(10),
         startAfter(lastVisibleTransaction)
       );
@@ -188,7 +194,7 @@ export default class SearchScreen extends Component {
 
       searchDocs.forEach((doc) => {
         this.setState({
-          allTransactions: [...this.state.allTransactions, doc.data()],
+          allTransactions: [...allTransactions, doc.data()],
           lastVisibleTransaction: doc,
         });
       });

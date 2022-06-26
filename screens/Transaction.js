@@ -117,6 +117,8 @@ export default class TransactionScreen extends Component {
       this.setState({
         bookId: "",
         studentId: "",
+        bookName: "",
+        studentName: "",
       });
     }
   };
@@ -276,8 +278,6 @@ export default class TransactionScreen extends Component {
       limit(1)
     );
     const docs = await getDocs(transactionRef);
-
-    console.log(docs);
 
     var isStudentEligible;
     docs.forEach((doc) => {
