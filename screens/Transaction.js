@@ -84,8 +84,8 @@ export default class TransactionScreen extends Component {
     const { bookId } = this.state;
     const { studentId } = this.state;
 
-    this.getBookDetails(bookId);
-    this.getStudentDetails(studentId);
+    await this.getBookDetails(bookId);
+    await this.getStudentDetails(studentId);
     const { bookName, studentName } = this.state;
 
     var transactionType = await this.checkBookAvailability(bookId);
@@ -193,30 +193,32 @@ export default class TransactionScreen extends Component {
     });
   };
 
-  getBookDetails = (bookId) => {
+  getBookDetails = async (bookId) => {
     bookId = bookId.trim();
     const bookRef = doc(db, "books", bookId);
+    const bookDoc = await getDoc(bookRef);
 
-    getDoc(bookRef)
-      .then((doc) => {
-        this.setState({
-          bookName: doc.data().book_name,
-        });
-      })
-      .catch((error) => console.warn(error.message));
+    try {
+      this.setState({
+        bookName: bookDoc.data().book_name,
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
-  getStudentDetails = (studentId) => {
+  getStudentDetails = async (studentId) => {
     studentId = studentId.trim();
     const studentRef = doc(db, "students", studentId);
+    const studentDoc = await getDoc(studentRef)
 
-    getDoc(studentRef)
-      .then((doc) => {
-        this.setState({
-          studentName: doc.data().student_name,
-        });
-      })
-      .catch((error) => console.warn(error.message));
+    try {
+      this.setState({
+        studentName: studentDoc.data().student_name,
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   checkBookAvailability = async (bookId) => {
@@ -307,7 +309,11 @@ export default class TransactionScreen extends Component {
       );
     }
     return (
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={-500} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={-500}
+        style={styles.container}
+      >
         <RootSiblingParent>
           <ImageBackground source={bgImage} style={styles.bgImage}>
             <View style={styles.upperContainer}>
@@ -414,7 +420,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderColor: "#FFFFFF",
     marginTop: 10,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   textInput: {
     minWidth: "57%",
