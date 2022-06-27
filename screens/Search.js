@@ -110,6 +110,7 @@ export default class SearchScreen extends Component {
     }
 
     if (enteredText[0] == "B") {
+      try{
       var searchRef = query(
         collection(db, "transactions"),
         where("book_id", "==", text),
@@ -117,7 +118,9 @@ export default class SearchScreen extends Component {
         limit(10)
       );
       var searchDocs = await getDocs(searchRef);
-
+      }catch(error){
+        console.error(error.message)
+      }
       searchDocs.forEach((doc) => {
         this.setState({
           allTransactions: [...this.state.allTransactions, doc.data()],
@@ -125,13 +128,18 @@ export default class SearchScreen extends Component {
         });
       });
     } else if (enteredText[0] == "S") {
-      var searchRef = query(
-        collection(db, "transactions"),
-        where("student_id", "==", text),
-        orderBy("date", "desc"),
-        limit(10)
-      );
-      var searchDocs = await getDocs(searchRef);
+      try{
+        var searchRef = query(
+          collection(db, "transactions"),
+          where("student_id", "==", text),
+          orderBy("date", "desc"),
+          limit(10)
+        );
+        var searchDocs = await getDocs(searchRef);
+      } catch(error){
+        console.error(error.message);
+      }
+      
 
       searchDocs.forEach((doc) => {
         this.setState({
