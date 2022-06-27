@@ -23,9 +23,10 @@ import {
   query,
   where,
   getDocs,
-  limit
+  limit,
+  orderBy,
 } from "firebase/firestore";
-//toast p/ iPhone
+//toast p/ iPhone e Android
 import { RootSiblingParent } from "react-native-root-siblings";
 import Toast from "react-native-root-toast";
 
@@ -83,8 +84,8 @@ export default class TransactionScreen extends Component {
     const { bookId } = this.state;
     const { studentId } = this.state;
 
-    this.getBookDetails(bookId);
-    this.getStudentDetails(studentId);
+    await this.getBookDetails(bookId);
+    await this.getStudentDetails(studentId);
     const { bookName, studentName } = this.state;
 
     var transactionType = await this.checkBookAvailability(bookId);
@@ -116,6 +117,8 @@ export default class TransactionScreen extends Component {
       this.setState({
         bookId: "",
         studentId: "",
+        bookName: "",
+        studentName: "",
       });
     }
   };
@@ -192,30 +195,32 @@ export default class TransactionScreen extends Component {
     });
   };
 
-  getBookDetails = (bookId) => {
+  getBookDetails = async (bookId) => {
     bookId = bookId.trim();
     const bookRef = doc(db, "books", bookId);
+    const bookDoc = await getDoc(bookRef);
 
-    getDoc(bookRef)
-      .then((doc) => {
-        this.setState({
-          bookName: doc.data().book_name,
-        });
-      })
-      .catch((error) => console.warn(error.message));
+    try {
+      this.setState({
+        bookName: bookDoc.data().book_name,
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
-  getStudentDetails = (studentId) => {
+  getStudentDetails = async (studentId) => {
     studentId = studentId.trim();
     const studentRef = doc(db, "students", studentId);
+    const studentDoc = await getDoc(studentRef)
 
-    getDoc(studentRef)
-      .then((doc) => {
-        this.setState({
-          studentName: doc.data().student_name,
-        });
-      })
-      .catch((error) => console.warn(error.message));
+    try {
+      this.setState({
+        studentName: studentDoc.data().student_name,
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   checkBookAvailability = async (bookId) => {
@@ -223,7 +228,7 @@ export default class TransactionScreen extends Component {
     const bookDoc = await getDoc(bookRef);
     let transactionType = "";
 
-    if (bookDoc.data()) {
+    if (bookDoc.exists()) {
       let book = bookDoc.data();
       transactionType = book.is_book_available ? "issue" : "return";
     } else {
@@ -239,7 +244,7 @@ export default class TransactionScreen extends Component {
 
     var isStudentEligible = "";
 
-    if (studentDoc.exists) {
+    if (studentDoc.exists()) {
       if (studentDoc.data().number_of_books_issued < 2) {
         isStudentEligible = true;
       } else {
@@ -269,6 +274,7 @@ export default class TransactionScreen extends Component {
     const transactionRef = query(
       collection(db, "transactions"),
       where("book_id", "==", bookId),
+      orderBy("date", "desc"),
       limit(1)
     );
     const docs = await getDocs(transactionRef);
@@ -303,7 +309,11 @@ export default class TransactionScreen extends Component {
       );
     }
     return (
-      <KeyboardAvoidingView behavior="height" style={styles.container}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={-500}
+        style={styles.container}
+      >
         <RootSiblingParent>
           <ImageBackground source={bgImage} style={styles.bgImage}>
             <View style={styles.upperContainer}>
@@ -410,7 +420,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderColor: "#FFFFFF",
     marginTop: 10,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   textInput: {
     minWidth: "57%",
