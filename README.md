@@ -8,6 +8,8 @@
 
 Um app mobile que visa providenciar uma solução de administração de bibliotecas, para escolas com poucos recursos e sem uma bibliotecária. Construído em JavaScript, com React-Native e Firebase
 
+Com o app, cada professor da escola pode fazer retiradas e devoluções de livros de maneira fácil e eficiente, além de checar as transações já realizadas. O próprio aplicativo bloqueia as transações e emite um aviso caso o aluno já esteja com o número máximo de livros permitido pela escola.
+
 Ao desenvolver este app, os alunos aprendem:
 - criação de user stories
 - gerenciamento de versões com Git e GitHub
@@ -25,6 +27,13 @@ Ao desenvolver este app, os alunos aprendem:
 
 ## Funcionalidades
 
+### Tela de Login: 
+
+- tela de carregamento (splash) personalizada
+- autenticação por email e senha, por meio do Firebase Authentication
+- feedback para o usuário por meio de alerta caso a autenticação seja negada
+- feedback para o usuário por meio de Toast caso a autenticação seja bem sucedida
+
 ### Tela de Transações: 
 
 <img src="https://github.com/Beatriz-Sanchez/biblioteca-eletronica/blob/main/assets/biblio-transacoes-cropped.gif?raw=true" width="300">
@@ -33,3 +42,9 @@ Ao desenvolver este app, os alunos aprendem:
 - confere disponibilidade do livro para detectar se a transação será uma devolução ou uma retirada
 - confere eligibilidade do aluno para a realização da transação e automaticamente realiza a transação desejada caso ela seja possível
 - feedback para o usuário por meio de Toast caso algum dos IDs não seja encontrado ou o aluno não se encontre elegivel para a transação
+
+### Tela de Pesquisa: 
+
+- lista de pesquisas com "lazy loading", que carrega 10 itens a cada vez que o usuário termina de percorrer 70% da lista visível.
+- lista inicial com todas as tansações ordenadas por data
+- entrada de ID do aluno ou ID do livro para filtrar as transações por livro ou aluno
