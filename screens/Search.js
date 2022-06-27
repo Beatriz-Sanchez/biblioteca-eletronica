@@ -1,9 +1,16 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 
 import { db } from "../config";
 
-import { collection, getDocs, query, where, limit } from "firebase/firestore";
+import { collection, getDocs, query, where, limit, orderBy } from "firebase/firestore";
 
 import { Avatar, ListItem, Icon } from "react-native-elements";
 
@@ -81,38 +88,54 @@ export default class SearchScreen extends Component {
     this.getTransactions();
   }
 
-  handleSearch = async text => {
+  handleSearch = async (text) => {
     var enteredText = text.toUpperCase().split("");
     text = text.toUpperCase();
-    
+
     this.setState({
-      allTransactions: []
-    })
-    if(!text){
+      allTransactions: [],
+    });
+    if (!text) {
       this.getTransactions();
     }
 
-    if(enteredText[0] == "B"){
-      var searchRef = query(collection(db,"transactions"), where("book_id", "==", text))
-      var searchDocs = await getDocs(searchRef)
+    if (enteredText[0] == "B") {
+      var searchRef = query(
+        collection(db, "transactions"),
+        where("book_id", "==", text),
+        orderBy("date", "desc")
+      );
 
-      searchDocs.forEach((doc) => {
-        this.setState({
-          allTransactions: [...this.state.allTransactions, doc.data()],
-        })
-      })
-      
-    }else if(enteredText[0] == "S"){
-      var searchRef = query(collection(db,"transactions"), where("student_id", "==", text))
-      var searchDocs = await getDocs(searchRef)
+      try {
+        var searchDocs = await getDocs(searchRef);
 
-      searchDocs.forEach((doc) => {
-        this.setState({
-          allTransactions: [...this.state.allTransactions, doc.data()],
-        })
-      })
+        searchDocs.forEach((doc) => {
+          this.setState({
+            allTransactions: [...this.state.allTransactions, doc.data()],
+          });
+        });
+      } catch (error) {
+        console.error(error.message);
+      }
+    } else if (enteredText[0] == "S") {
+      var searchRef = query(
+        collection(db, "transactions"),
+        where("student_id", "==", text),
+        orderBy("date", "desc")
+      );
+      try {
+        var searchDocs = await getDocs(searchRef);
+
+        searchDocs.forEach((doc) => {
+          this.setState({
+            allTransactions: [...this.state.allTransactions, doc.data()],
+          });
+        });
+      } catch (error) {
+        console.error(error.message);
+      }
     }
-  }
+  };
 
   render() {
     const { allTransactions, searchText } = this.state;
@@ -194,7 +217,7 @@ const styles = StyleSheet.create({
   },
   lowerContainer: {
     flex: 0.8,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#FFFFFF",
   },
   title: {
     fontSize: 20,
