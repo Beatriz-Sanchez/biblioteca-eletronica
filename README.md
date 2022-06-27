@@ -8,6 +8,8 @@
 
 Um app mobile que visa providenciar uma solução de administração de bibliotecas, para escolas com poucos recursos e sem uma bibliotecária. Construído em JavaScript, com React-Native e Firebase
 
+Com o app, cada professor da escola pode fazer retiradas e devoluções de livros de maneira fácil e eficiente, além de checar as transações já realizadas. O próprio aplicativo bloqueia as transações e emite um aviso caso o aluno já esteja com o número máximo de livros permitido pela escola.
+
 Ao desenvolver este app, os alunos aprendem:
 - criação de user stories
 - gerenciamento de versões com Git e GitHub
