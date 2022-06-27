@@ -23,7 +23,8 @@ import {
   query,
   where,
   getDocs,
-  limit
+  limit,
+  orderBy,
 } from "firebase/firestore";
 //toast p/ iPhone
 import { RootSiblingParent } from "react-native-root-siblings";
@@ -83,8 +84,8 @@ export default class TransactionScreen extends Component {
     const { bookId } = this.state;
     const { studentId } = this.state;
 
-    this.getBookDetails(bookId);
-    this.getStudentDetails(studentId);
+    await this.getBookDetails(bookId);
+    await this.getStudentDetails(studentId);
     const { bookName, studentName } = this.state;
 
     var transactionType = await this.checkBookAvailability(bookId);
@@ -192,30 +193,32 @@ export default class TransactionScreen extends Component {
     });
   };
 
-  getBookDetails = (bookId) => {
+  getBookDetails = async (bookId) => {
     bookId = bookId.trim();
     const bookRef = doc(db, "books", bookId);
-
-    getDoc(bookRef)
-      .then((doc) => {
-        this.setState({
-          bookName: doc.data().book_name,
-        });
-      })
-      .catch((error) => console.warn(error.message));
+    const bookDoc = await getDoc(bookRef);
+    try {
+      this.setState({
+        bookName: bookDoc.data().book_name,
+      });
+      //console.log(this.state.bookName) aqui pra testar, depois apagar
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   getStudentDetails = (studentId) => {
     studentId = studentId.trim();
     const studentRef = doc(db, "students", studentId);
+    const studentDoc = await getDoc(studentRef);
 
-    getDoc(studentRef)
-      .then((doc) => {
-        this.setState({
-          studentName: doc.data().student_name,
-        });
-      })
-      .catch((error) => console.warn(error.message));
+    try {
+      this.setState({
+        studentName: studentDoc.data().student_name,
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   checkBookAvailability = async (bookId) => {
@@ -269,6 +272,7 @@ export default class TransactionScreen extends Component {
     const transactionRef = query(
       collection(db, "transactions"),
       where("book_id", "==", bookId),
+      orderBy("date", "desc"),
       limit(1)
     );
     const docs = await getDocs(transactionRef);
